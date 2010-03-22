@@ -9,7 +9,7 @@ class Ball {
   Ball(int start_x, int start_y);
 
   SDL_Rect get_position();
-  void update_position();
+  void update_position(const SDL_Rect& playing_field, const SDL_Rect& first_paddle, const SDL_Rect& second_paddle);
   void set_speed(int new_x_speed, int new_y_speed);
 
   static const int DefaultDiameter = 20;
