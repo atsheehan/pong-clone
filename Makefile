@@ -6,10 +6,15 @@ vpath %_test.cpp test
 vpath %.h src
 vpath %.cpp src
 
-all: run_tests
+all: run_tests pong
+
+pong: $(objects) main.o
+	g++ $(CPPFLAGS) -o pong $(objects) main.o `sdl-config --cflags --libs`
 
 all_tests: $(test_objects) $(objects)
-	g++ -o all_tests $(test_objects) $(objects) /usr/lib/libUnitTest++.a
+	g++ $(CPPFLAGS) -o all_tests $(test_objects) $(objects) /usr/lib/libUnitTest++.a
+
+ball_test.o: ball.h
 
 .PHONY: run_tests clean
 
@@ -17,4 +22,4 @@ run_tests: all_tests
 	./$<
 
 clean:
-	-rm all_tests $(test_objects) $(objects)
+	-rm all_tests pong main.o $(test_objects) $(objects)
