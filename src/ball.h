@@ -6,9 +6,20 @@
 class Ball {
  public:
   Ball();
+  Ball(int start_x, int start_y);
 
   SDL_Rect get_position();
+  void update_position();
+  void set_speed(int new_x_speed, int new_y_speed);
+
   static const int DefaultDiameter = 20;
+
+ private:
+  void init(int start_x, int start_y);
+
+  SDL_Rect position;
+  int x_speed;
+  int y_speed;
 };
 
 
