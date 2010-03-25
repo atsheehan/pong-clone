@@ -33,6 +33,8 @@ int main() {
   Paddle computer_paddle(330, 0);
   
   Uint32 black = SDL_MapRGB(display_screen->format, 0, 0, 0);
+  const Uint32 TicksPerFrame = 17; // 1000 ticks per second / 60 frames per second =~ 17
+  Uint32 ticks_at_previous_frame = SDL_GetTicks();
 
   SDL_Event event;
   bool exit_game_loop = false;
@@ -45,6 +47,16 @@ int main() {
       }
     }
     
+    Uint8* keystate = SDL_GetKeyState(NULL);
+    if (keystate[SDLK_UP]) {
+      user_paddle.move_up(playing_field);
+    }
+
+    if (keystate[SDLK_DOWN]) {
+      user_paddle.move_down(playing_field);
+    }
+
+
     ball.update_position(playing_field, user_paddle.get_position(), computer_paddle.get_position());
     
     SDL_FillRect(display_screen, NULL, black);
@@ -52,6 +64,9 @@ int main() {
     user_paddle.draw(display_screen);
     computer_paddle.draw(display_screen);
     SDL_Flip(display_screen);
+
+    while (SDL_GetTicks() < ticks_at_previous_frame + TicksPerFrame) {}
+    ticks_at_previous_frame = SDL_GetTicks();
   }
 
   return 0;
