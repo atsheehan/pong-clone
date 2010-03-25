@@ -255,4 +255,72 @@ namespace {
     CHECK(new_position.y == paddle_bottom_edge - 19);
     CHECK(new_position.x == ball_start_x + 2);
   }
+
+  // to test for goals, the update_position method will return a value to indicate if it
+  // went past either goal
+  TEST_FIXTURE(BallTestFixture, when_the_ball_passes_a_goal_return_a_special_value) {
+
+    // start the ball in the corner of the playing field with the left edge of the ball flush
+    // against the left edge of the playing field. give it a velocity moving half the distance of
+    // the ball in the left direction each update. this means that after two updates, the ball
+    // should have completely cleared the field, with the right edge of the ball now past the
+    // left edge of the field. check to make sure a special value was returned from the update
+    // method.
+
+    // +1 in case the diameter is odd and division is truncated
+    const int BallSpeed = (Ball::DefaultDiameter / 2) + 1;
+    Ball ball_one(playing_field.x, playing_field.y);
+    ball_one.set_speed(-BallSpeed, 0); // negate to go left
+
+    CHECK(ball_one.update_position(playing_field, left_paddle, right_paddle) == 0);
+    CHECK(ball_one.update_position(playing_field, left_paddle, right_paddle) == Ball::EnteredLeftGoal);
+
+    // now repeat on the right side of the field
+    Ball ball_two(playing_field.x + playing_field.w - Ball::DefaultDiameter, playing_field.y);
+    ball_two.set_speed(BallSpeed, 0);
+
+    CHECK(ball_two.update_position(playing_field, left_paddle, right_paddle) == 0);
+    CHECK(ball_two.update_position(playing_field, left_paddle, right_paddle) == Ball::EnteredRightGoal);
+  }
+
+  // when the ball moves past the goal, it needs a way to be reset back on the playing field.
+  // the reset position method should move the ball back to the original coordinates it was
+  // given.
+  TEST_FIXTURE(BallTestFixture, reset_ball_position_to_original_coordinates) {
+    const int original_x = 100;
+    const int original_y = 200;
+    Ball ball(original_x, original_y);
+    ball.set_speed(20, 40);
+
+    ball.update_position(playing_field, left_paddle, right_paddle);
+    ball.update_position(playing_field, left_paddle, right_paddle);
+
+    ball.reset();
+
+    SDL_Rect current_position = ball.get_position();
+    CHECK(current_position.x == original_x);
+    CHECK(current_position.y == original_y);
+    CHECK(current_position.h == Ball::DefaultDiameter);
+    CHECK(current_position.w == Ball::DefaultDiameter);
+  }
+
+  // when the ball is reset, it's speed should also be set to zero
+  TEST_FIXTURE(BallTestFixture, reset_ball_should_set_speed_to_zero) {
+    const int original_x = 5;
+    const int original_y = 6;
+    Ball ball(original_x, original_y);
+    ball.set_speed(20, 40);
+
+    // reset should move it back to the original x and y, and also set the speed to 0. any
+    // further updates should not move the ball from the original x and y
+    ball.reset();
+
+
+    ball.update_position(playing_field, left_paddle, right_paddle);
+    ball.update_position(playing_field, left_paddle, right_paddle);
+
+    SDL_Rect current_position = ball.get_position();
+    CHECK(current_position.x == original_x);
+    CHECK(current_position.y == original_y);
+  }
 }

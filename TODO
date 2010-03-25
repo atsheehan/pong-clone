@@ -1,0 +1,6 @@
+check for collision only if the ball is moving in the right direction
+change deflection based on where the ball hits the paddle
+add different colors
+add some AI for the other paddle
+add a score
+reset paddle and ball positions

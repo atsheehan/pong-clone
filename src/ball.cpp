@@ -9,15 +9,15 @@ Ball::Ball(int start_x, int start_y) {
 }
 
 void Ball::init(int start_x, int start_y) {
-  position.x = start_x;
-  position.y = start_y;
+  position.x = initial_x = start_x;
+  position.y = initial_y = start_y;
 
   position.h = position.w = DefaultDiameter;
 
   x_speed = y_speed = 0;
 }
 
-void Ball::update_position(const SDL_Rect& playing_field, const SDL_Rect& left_paddle, const SDL_Rect& right_paddle) {
+int Ball::update_position(const SDL_Rect& playing_field, const SDL_Rect& left_paddle, const SDL_Rect& right_paddle) {
 
   position.x += x_speed;
   position.y += y_speed;
@@ -32,6 +32,14 @@ void Ball::update_position(const SDL_Rect& playing_field, const SDL_Rect& left_p
   const int right_paddle_right_edge = right_paddle.x + right_paddle.w;
   const int right_paddle_bottom_edge = right_paddle.y + right_paddle.h;
   
+  // check to see if the ball went past any goal lines
+  if (ball_right_edge <= playing_field.x) {
+    return EnteredLeftGoal;
+  }
+
+  if (position.x >= playing_field_right_edge) {
+    return EnteredRightGoal;
+  }
 
   // check for collision with the top and bottom of the playing field
   if (position.y < playing_field.y) {
@@ -45,20 +53,6 @@ void Ball::update_position(const SDL_Rect& playing_field, const SDL_Rect& left_p
     position.y = playing_field_bottom_edge - position.h - difference;
     y_speed = -y_speed;
   }
-
-  // TEMPORARY FOR TESTING - this rebounds the ball from the left and right edges
-  if (position.x < playing_field.x) {
-    int difference = playing_field.x - position.x;
-    position.x = playing_field.x + difference;
-    x_speed = -x_speed;
-  }
-
-  if (ball_right_edge > playing_field_right_edge) {
-    int difference = ball_right_edge - playing_field_right_edge;
-    position.x = playing_field_right_edge - position.w - difference;
-    x_speed = -x_speed;
-  }
-  // TEMPORARY
 
   // check for collision with the left paddle
   if (position.x < left_paddle_right_edge &&
@@ -79,6 +73,8 @@ void Ball::update_position(const SDL_Rect& playing_field, const SDL_Rect& left_p
     position.x = right_paddle.x - position.w - difference;
     x_speed = -x_speed;
   }
+
+  return 0;
 }
 
 const SDL_Rect& Ball::get_position() {
@@ -88,6 +84,13 @@ const SDL_Rect& Ball::get_position() {
 void Ball::set_speed(int new_x_speed, int new_y_speed) {
   x_speed = new_x_speed;
   y_speed = new_y_speed;
+}
+
+void Ball::reset() {
+  position.x = initial_x;
+  position.y = initial_y;
+  position.w = position.h = DefaultDiameter;
+  x_speed = y_speed = 0;
 }
 
 void Ball::draw(SDL_Surface* screen) {

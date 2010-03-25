@@ -15,24 +15,34 @@ int main() {
 
   atexit(SDL_Quit);
 
+  const int ScreenWidth = 640;
+  const int ScreenHeight = 480;
+
   SDL_Surface* display_screen;
-  display_screen = SDL_SetVideoMode(400, 400, 16, SDL_SWSURFACE);
+  display_screen = SDL_SetVideoMode(ScreenWidth, ScreenHeight, 16, SDL_SWSURFACE);
   if (display_screen == NULL) {
     cerr << "could not set the video mode: " << SDL_GetError() << endl;
     return 1;
   }
 
+  const int PlayingFieldMargin = 10;
   SDL_Rect playing_field;
-  playing_field.x = playing_field.y = 0;
-  playing_field.h = playing_field.w = 400;
+  playing_field.x = 0;
+  playing_field.y = PlayingFieldMargin;
+  playing_field.w = ScreenWidth;
+  playing_field.h = ScreenHeight - (2 * PlayingFieldMargin); // add margins to the top and bottom
+
+  Uint32 background_color = SDL_MapRGB(display_screen->format, 198, 226, 255);
+  Uint32 playing_field_color = SDL_MapRGB(display_screen->format, 112, 128, 144);
 
   Ball ball(100, 100);
   ball.set_speed(10, 2);
 
-  Paddle user_paddle(40, 0);
-  Paddle computer_paddle(330, 0);
+  const int PaddleInitialY = (playing_field.h - Paddle::DefaultHeight) / 2 + playing_field.y;
+  const int PaddleDistanceFromEdge = (playing_field.w - playing_field.x) / 8;
+  Paddle user_paddle(playing_field.x + PaddleDistanceFromEdge, PaddleInitialY);
+  Paddle computer_paddle(playing_field.x + playing_field.w - PaddleDistanceFromEdge - Paddle::DefaultWidth, PaddleInitialY);
   
-  Uint32 black = SDL_MapRGB(display_screen->format, 0, 0, 0);
   const Uint32 TicksPerFrame = 17; // 1000 ticks per second / 60 frames per second =~ 17
   Uint32 ticks_at_previous_frame = SDL_GetTicks();
 
@@ -48,18 +58,33 @@ int main() {
     }
     
     Uint8* keystate = SDL_GetKeyState(NULL);
-    if (keystate[SDLK_UP]) {
+    if (keystate[SDLK_w]) {
       user_paddle.move_up(playing_field);
     }
 
-    if (keystate[SDLK_DOWN]) {
+    if (keystate[SDLK_s]) {
       user_paddle.move_down(playing_field);
     }
 
+    if (keystate[SDLK_UP]) {
+      computer_paddle.move_up(playing_field);
+    }
 
-    ball.update_position(playing_field, user_paddle.get_position(), computer_paddle.get_position());
+    if (keystate[SDLK_DOWN]) {
+      computer_paddle.move_down(playing_field);
+    }
+
+
+    int result = ball.update_position(playing_field, user_paddle.get_position(), 
+				      computer_paddle.get_position());
+    if (result != 0) {
+      ball.reset();
+      ball.set_speed(10, 5);
+    }
     
-    SDL_FillRect(display_screen, NULL, black);
+    
+    SDL_FillRect(display_screen, NULL, background_color);
+    SDL_FillRect(display_screen, &playing_field, playing_field_color);
     ball.draw(display_screen);
     user_paddle.draw(display_screen);
     computer_paddle.draw(display_screen);
