@@ -24,6 +24,7 @@ void Ball::update_position(const SDL_Rect& playing_field, const SDL_Rect& left_p
   
   // these calculated constants make reading the collision detection much easier
   const int playing_field_bottom_edge = playing_field.y + playing_field.h;
+  const int playing_field_right_edge = playing_field.x + playing_field.w;
   const int ball_bottom_edge = position.y + position.h;
   const int ball_right_edge = position.x + position.w;
   const int left_paddle_right_edge = left_paddle.x + left_paddle.w;
@@ -44,6 +45,20 @@ void Ball::update_position(const SDL_Rect& playing_field, const SDL_Rect& left_p
     position.y = playing_field_bottom_edge - position.h - difference;
     y_speed = -y_speed;
   }
+
+  // TEMPORARY FOR TESTING - this rebounds the ball from the left and right edges
+  if (position.x < playing_field.x) {
+    int difference = playing_field.x - position.x;
+    position.x = playing_field.x + difference;
+    x_speed = -x_speed;
+  }
+
+  if (ball_right_edge > playing_field_right_edge) {
+    int difference = ball_right_edge - playing_field_right_edge;
+    position.x = playing_field_right_edge - position.w - difference;
+    x_speed = -x_speed;
+  }
+  // TEMPORARY
 
   // check for collision with the left paddle
   if (position.x < left_paddle_right_edge &&
@@ -66,11 +81,16 @@ void Ball::update_position(const SDL_Rect& playing_field, const SDL_Rect& left_p
   }
 }
 
-SDL_Rect Ball::get_position() {
+const SDL_Rect& Ball::get_position() {
   return position;
 }
 
 void Ball::set_speed(int new_x_speed, int new_y_speed) {
   x_speed = new_x_speed;
   y_speed = new_y_speed;
+}
+
+void Ball::draw(SDL_Surface* screen) {
+  Uint32 white = SDL_MapRGB(screen->format, 255, 255, 255);
+  SDL_FillRect(screen, &position, white);
 }
