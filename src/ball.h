@@ -4,7 +4,7 @@
 #include "SDL/SDL.h"
 #include "drawable.h"
 
-class Ball {
+class Ball : public IDrawable {
  public:
   Ball();
   Ball(int start_x, int start_y);

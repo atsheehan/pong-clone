@@ -1,7 +1,7 @@
-objects = ball.o paddle.o
-test_objects = all_test.o ball_test.o paddle_test.o
+objects = ball.o paddle.o score_keeper.o
+test_objects = all_test.o ball_test.o paddle_test.o score_keeper_test.o
 CPPFLAGS = -I src
-SDL_LINKER = `sdl-config --cflags --libs`
+SDL_LINKER = `sdl-config --cflags --libs` -lSDL_ttf
 
 vpath %_test.cpp test
 vpath %.h src
@@ -19,6 +19,8 @@ ball_test.o: ball.h drawable.h
 ball.o: drawable.h
 paddle_test.o: paddle.h drawable.h
 paddle.o: drawable.h
+score_keeper_test.o: score_keeper.h drawable.h
+score_keeper.o: drawable.h
 
 .PHONY: run_tests clean
 
