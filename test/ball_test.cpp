@@ -323,4 +323,23 @@ namespace {
     CHECK(current_position.x == original_x);
     CHECK(current_position.y == original_y);
   }
+
+  // when the ball is reset, it has no velocity. we need to be able to check when it has been
+  // reset so that the player can set it in motion at will.
+  TEST_FIXTURE(BallTestFixture, check_if_the_ball_is_moving) {
+    Ball ball;
+    CHECK(ball.is_in_motion() == false);
+
+    ball.set_speed(10, 0);
+    CHECK(ball.is_in_motion() == true);
+
+    ball.reset();
+    CHECK(ball.is_in_motion() == false);
+
+    ball.set_speed(0, 10);
+    CHECK(ball.is_in_motion() == true);
+
+    ball.set_speed(0, 0);
+    CHECK(ball.is_in_motion() == false);
+  }
 }

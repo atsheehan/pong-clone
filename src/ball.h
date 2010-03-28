@@ -14,6 +14,7 @@ class Ball : public IDrawable {
   void set_speed(int new_x_speed, int new_y_speed);
   void reset();
   void draw(SDL_Surface* screen);
+  bool is_in_motion();
 
   static const int DefaultDiameter = 20;
   static const int EnteredLeftGoal = 1;

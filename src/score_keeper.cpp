@@ -38,7 +38,7 @@ void ScoreKeeper::draw(SDL_Surface* screen) {
 
   SDL_Color black = {0, 0, 0};
   SDL_Surface* score_surface = TTF_RenderText_Solid(font, score_string.c_str(), black);
-  SDL_BlitSurface(score_surface, NULL, screen, NULL);
+  SDL_BlitSurface(score_surface, NULL, screen, &destination);
   SDL_FreeSurface(score_surface);
 }
 

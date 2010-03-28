@@ -17,8 +17,8 @@ int main() {
 
   atexit(SDL_Quit);
 
-  const int ScreenWidth = 640;
-  const int ScreenHeight = 480;
+  const int ScreenWidth = 800;
+  const int ScreenHeight = 600;
 
   SDL_Surface* display_screen;
   display_screen = SDL_SetVideoMode(ScreenWidth, ScreenHeight, 16, SDL_SWSURFACE);
@@ -34,31 +34,32 @@ int main() {
   atexit(TTF_Quit);
   
   const int FontSize = 20;
-  TTF_Font* size_10_mono_font = TTF_OpenFont("./data/FreeMono.ttf", FontSize);
+  TTF_Font* size_10_mono_font = TTF_OpenFont("./data/FreeMonoBold.ttf", FontSize);
   if (!size_10_mono_font) {
     cerr << "could not load the font file: " << TTF_GetError() << endl;
     return 1;
   }
 
 
-  const int PlayingFieldMargin = 10;
+  const int PlayingFieldMargin = 30;
   SDL_Rect playing_field;
   playing_field.x = 0;
   playing_field.y = PlayingFieldMargin;
   playing_field.w = ScreenWidth;
   playing_field.h = ScreenHeight - (2 * PlayingFieldMargin); // add margins to the top and bottom
 
+  const int ScoreBoxWidth = 40;
   SDL_Rect player_one_score_position;
-  player_one_score_position.x = 40;
+  player_one_score_position.x = playing_field.x + ((playing_field.w / 4) - (ScoreBoxWidth / 2));
   player_one_score_position.y = 0;
   player_one_score_position.h = PlayingFieldMargin;
-  player_one_score_position.w = 40;
+  player_one_score_position.w = ScoreBoxWidth;
 
   SDL_Rect player_two_score_position;
-  player_two_score_position.x = 300;
+  player_two_score_position.x = playing_field.x + ((3 * playing_field.w / 4) - (ScoreBoxWidth / 2));
   player_two_score_position.y = 0;
   player_two_score_position.h = PlayingFieldMargin;
-  player_two_score_position.w = 40;
+  player_two_score_position.w = ScoreBoxWidth;
  
   ScoreKeeper player_one_score_keeper(size_10_mono_font, player_one_score_position);
   ScoreKeeper player_two_score_keeper(size_10_mono_font, player_two_score_position);
@@ -66,8 +67,9 @@ int main() {
   Uint32 background_color = SDL_MapRGB(display_screen->format, 198, 226, 255);
   Uint32 playing_field_color = SDL_MapRGB(display_screen->format, 112, 128, 144);
 
-  Ball ball(100, 100);
-  ball.set_speed(10, 2);
+  const int InitialBallXPosition = playing_field.x + (playing_field.w - Ball::DefaultDiameter) / 2;
+  const int InitialBallYPosition = playing_field.y + (playing_field.h - Ball::DefaultDiameter) / 2;
+  Ball ball(InitialBallXPosition, InitialBallYPosition);
 
   const int PaddleInitialY = (playing_field.h - Paddle::DefaultHeight) / 2 + playing_field.y;
   const int PaddleDistanceFromEdge = (playing_field.w - playing_field.x) / 8;
@@ -85,6 +87,16 @@ int main() {
       case SDL_QUIT:
 	exit_game_loop = true;
 	break;
+
+      case SDL_KEYDOWN:
+	switch (event.key.keysym.sym) {
+	case SDLK_SPACE:
+	  if (!ball.is_in_motion()) {
+	    ball.set_speed(10, 5);
+	  }
+	}
+	break;
+
       }
     }
     
@@ -110,8 +122,6 @@ int main() {
 				      computer_paddle.get_position());
     if (result != 0) {
       ball.reset();
-      ball.set_speed(10, 5);
-
       if (result == Ball::EnteredLeftGoal) {
 	player_two_score_keeper.add_point();
       }

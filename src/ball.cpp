@@ -97,3 +97,7 @@ void Ball::draw(SDL_Surface* screen) {
   Uint32 white = SDL_MapRGB(screen->format, 255, 255, 255);
   SDL_FillRect(screen, &position, white);
 }
+
+bool Ball::is_in_motion() {
+  return x_speed || y_speed ? true : false;
+}
