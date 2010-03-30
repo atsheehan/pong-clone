@@ -1,5 +1,5 @@
-objects = ball.o paddle.o score_keeper.o  menu.o
-test_objects = all_test.o ball_test.o paddle_test.o score_keeper_test.o menu_test.o
+objects = ball.o paddle.o score_keeper.o  menu.o ai.o
+test_objects = all_test.o ball_test.o paddle_test.o score_keeper_test.o menu_test.o ai_test.o
 CPPFLAGS = -I src
 SDL_LINKER = `sdl-config --cflags --libs` -lSDL_ttf
 
@@ -23,6 +23,7 @@ score_keeper_test.o: score_keeper.h drawable.h
 score_keeper.o: drawable.h
 menu_test.o: menu.h drawable.h
 menu.o: drawable.h
+ai_test.o: ai.h
 
 .PHONY: run_tests clean
 

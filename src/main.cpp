@@ -7,6 +7,7 @@
 #include "paddle.h"
 #include "score_keeper.h"
 #include "menu.h"
+#include "ai.h"
 
 using std::cerr;
 using std::endl;
@@ -92,6 +93,8 @@ int main() {
   const int PaddleDistanceFromEdge = (playing_field.w - playing_field.x) / 8;
   Paddle user_paddle(playing_field.x + PaddleDistanceFromEdge, PaddleInitialY);
   Paddle computer_paddle(playing_field.x + playing_field.w - PaddleDistanceFromEdge - Paddle::DefaultWidth, PaddleInitialY);
+
+  AI controller(computer_paddle);
   
   const Uint32 TicksPerFrame = 17; // 1000 ticks per second / 60 frames per second =~ 17
   Uint32 ticks_at_previous_frame = SDL_GetTicks();
@@ -179,20 +182,12 @@ int main() {
       }
     
       keystate = SDL_GetKeyState(NULL);
-      if (keystate[SDLK_w]) {
+      if (keystate[SDLK_UP]) {
 	user_paddle.move_up(playing_field);
       }
 
-      if (keystate[SDLK_s]) {
-	user_paddle.move_down(playing_field);
-      }
-
-      if (keystate[SDLK_UP]) {
-	computer_paddle.move_up(playing_field);
-      }
-
       if (keystate[SDLK_DOWN]) {
-	computer_paddle.move_down(playing_field);
+	user_paddle.move_down(playing_field);
       }
 
 
@@ -208,6 +203,8 @@ int main() {
 	  player_one_score_keeper.add_point();
 	}
       }
+
+      controller.update(ball.get_position(), playing_field);
     
       SDL_FillRect(display_screen, NULL, background_color);
       SDL_FillRect(display_screen, &playing_field, playing_field_color);
