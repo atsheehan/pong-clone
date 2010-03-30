@@ -11,6 +11,7 @@ class Paddle : public IDrawable {
   const SDL_Rect& get_position();
   void move_up(const SDL_Rect& playing_field);
   void move_down(const SDL_Rect& playing_field);
+  void reset_position();
 
   void draw(SDL_Surface* screen);
 
@@ -23,6 +24,8 @@ class Paddle : public IDrawable {
 
   SDL_Rect position;
   int speed;
+  int initial_x;
+  int initial_y;
 };
 
 #endif // PADDLE_H

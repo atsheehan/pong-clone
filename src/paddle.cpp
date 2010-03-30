@@ -12,6 +12,11 @@ const SDL_Rect& Paddle::get_position() {
   return position;
 }
 
+void Paddle::reset_position() {
+  position.x = initial_x;
+  position.y = initial_y;
+}
+
 void Paddle::move_up(const SDL_Rect& playing_field) {
   position.y -= speed;
   
@@ -30,8 +35,8 @@ void Paddle::move_down(const SDL_Rect& playing_field) {
 }
 
 void Paddle::init(int initial_x, int initial_y) {
-  position.x = initial_x;
-  position.y = initial_y;
+  this->initial_x = position.x = initial_x;
+  this->initial_y = position.y = initial_y;
   position.w = DefaultWidth;
   position.h = DefaultHeight;
   speed = DefaultSpeed;

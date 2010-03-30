@@ -75,4 +75,17 @@ namespace {
     new_position = paddle_down.get_position();
     CHECK(new_position.y == playing_field.h - Paddle::DefaultHeight);
   }
+
+  TEST_FIXTURE(PaddleTestFixture, reset_paddle_to_original_position) {
+    Paddle paddle(100, 200);
+
+    paddle.move_up(playing_field);
+    paddle.move_up(playing_field);
+
+    paddle.reset_position();
+    SDL_Rect position = paddle.get_position();
+
+    CHECK(position.x == 100);
+    CHECK(position.y == 200);
+  }
 }

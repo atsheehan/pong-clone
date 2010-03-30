@@ -12,6 +12,7 @@ class ScoreKeeper : public IDrawable {
   const int get_score();
   void add_point();
   bool has_enough_points_to_win();
+  void reset_points();
 
   void draw(SDL_Surface* screen);
 

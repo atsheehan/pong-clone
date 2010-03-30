@@ -27,5 +27,16 @@ namespace {
     score_keeper.add_point();
     CHECK(score_keeper.has_enough_points_to_win() == true);
   }
+
+  TEST(reset_the_scores_back_to_zero) {
+    ScoreKeeper score_keeper;
+
+    score_keeper.add_point();
+    score_keeper.add_point();
+    score_keeper.add_point();
+    
+    score_keeper.reset_points();
+    CHECK(score_keeper.get_score() == 0);
+  }
 }
 

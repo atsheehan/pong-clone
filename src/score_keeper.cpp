@@ -26,6 +26,10 @@ bool ScoreKeeper::has_enough_points_to_win() {
   return score >= PointsToWin ? true : false;
 }
 
+void ScoreKeeper::reset_points() {
+  score = 0;
+}
+
 void ScoreKeeper::draw(SDL_Surface* screen) {
   if (!font) {
     return;
