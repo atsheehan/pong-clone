@@ -1,0 +1,13 @@
+This is a very simple Pong clone for Linux created in C++. It is mostly a test project for unit-testing in C++ using UnitTest++. It also uses SDL for rendering (just filled rects, no images) as well as SDL_ttf. Not much time has been devoted to making it enjoyable so I can't guarantee high replay value.
+
+To build the game, you need to have make and g++ installed as well as the UnitTest++, SDL, and SDL_ttf development headers and libraries installed. Then download the source and run 
+
+make
+
+from the root directory. This will compile the source and run the unit tests. To run the game, type
+
+./pong
+
+I'd be interested to know if it doesn't build on other Linux systems, so if you run into problems you can e-mail me at a.t.sheehan@gmail.com.
+
+Thanks
